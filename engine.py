@@ -15,7 +15,9 @@ import os
 
 from .components import IndividualBase, Population
 from .plugin_interfaces.operators import Selection, Crossover, Mutation
+
 from .plugin_interfaces.analysis import OnTheFlyAnalysis
+
 from mpiutil import MPIUtil
 
 mpi = MPIUtil()
@@ -383,6 +385,6 @@ class GAEngine(object):
         @wraps(fn)
         def _minimize(indv):
             return -fn(indv)
-            
+
         return _minimize
 
