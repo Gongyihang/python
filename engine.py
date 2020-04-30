@@ -383,5 +383,6 @@ class GAEngine(object):
         @wraps(fn)
         def _minimize(indv):
             return -fn(indv)
+            
         return _minimize
 

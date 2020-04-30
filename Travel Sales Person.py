@@ -4,6 +4,7 @@ Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
 """
 import matplotlib.pyplot as plt
 import numpy as np
+from mpiutil import MPIUtil
 #城市的数量
 N_CITIES = 200  # DNA size
 #交叉配对的比率
@@ -15,6 +16,7 @@ POP_SIZE = 500
 #变异的代数
 N_GENERATIONS = 99999999999
 
+mpi = MPIUtil()
 
 class GA(object):
     def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size, ):
@@ -23,6 +25,7 @@ class GA(object):
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
         #随机排列一个数组
+        #这里的ga.pop和mpi有关
         self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
     #翻译DNA
     def translateDNA(self, DNA, city_position):     # get cities' coord in order
