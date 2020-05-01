@@ -149,4 +149,3 @@ def master_only(func):
             return func(*args, **kwargs)
 
     return _call_in_master_proc
-

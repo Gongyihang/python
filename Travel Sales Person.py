@@ -21,7 +21,7 @@ MUTATE_RATE = 0.02
 #种群的数量
 POP_SIZE = 120
 #变异的代数
-N_GENERATIONS = 10
+N_GENERATIONS = 99999999
 
 
 class GA(object):
@@ -76,11 +76,12 @@ class GA(object):
 
     def evolve(self, fitness):
         if comm_rank == 0:
-            data = self.pop_div.copy()
+            data = self.pop_div
         else:
             data = None
         data = comm.scatter(data,root = 0)
         fit = np.split(fitness,self.pop_mpi, axis = 0)
+        print(fit)
         pop = self.select(fit[comm_rank],data)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
@@ -92,6 +93,7 @@ class GA(object):
             self.pop_div = data
         else:
             comm.gather(data,root=0)
+
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
         self.city_position = np.random.rand(n_cities, 2)
