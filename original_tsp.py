@@ -1,26 +1,12 @@
-"""
-Visualize Genetic Algorithm to find the shortest path for travel sales problem.
-Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
-"""
 import matplotlib.pyplot as plt
 import numpy as np
-from mpiutil import MPIUtil
-from mpi4py import MPI
 
-comm = MPI.COMM_WORLD
-comm_rank = comm.Get_rank()
-comm_size = comm.Get_size()
-
-#城市的数量
-N_CITIES = 24  # DNA size
-#交叉配对的比率
+N_CITIES = 20  # DNA size
 CROSS_RATE = 0.1
-#变异的概率
 MUTATE_RATE = 0.02
-#种群的数量
-POP_SIZE = 120
-#变异的代数
-N_GENERATIONS = 99999999999
+POP_SIZE = 500
+N_GENERATIONS = 500
+
 
 class GA(object):
     def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size, ):
@@ -28,13 +14,9 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-        self.pop_mpi = comm_size
-        #随机排列一个数组
+
         self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
-        #把这个数组按照进程的数量平均分成pop_divsize份
-        self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
-        self.pop_divsize = self.pop_size // self.pop_mpi
-    #翻译DNA
+
     def translateDNA(self, DNA, city_position):     # get cities' coord in order
         line_x = np.empty_like(DNA, dtype=np.float64)
         line_y = np.empty_like(DNA, dtype=np.float64)
@@ -43,29 +25,28 @@ class GA(object):
             line_x[i, :] = city_coord[:, 0]
             line_y[i, :] = city_coord[:, 1]
         return line_x, line_y
-    #种群的适应度
+
     def get_fitness(self, line_x, line_y):
         total_distance = np.empty((line_x.shape[0],), dtype=np.float64)
         for i, (xs, ys) in enumerate(zip(line_x, line_y)):
             total_distance[i] = np.sum(np.sqrt(np.square(np.diff(xs)) + np.square(np.diff(ys))))
-        fitness = np.exp(self.DNA_size * 2 / total_distance)#将总路程的差距扩大化
-        # print(fitness)
+        fitness = np.exp(self.DNA_size * 2 / total_distance)
         return fitness, total_distance
-    #适者生存，不适者淘汰的准则
-    def select(self, fitness, pop_div):
-        idx = np.random.choice(np.arange(self.pop_divsize), size=self.pop_divsize, replace=True, p = fitness / fitness.sum())
-        print(pop_div)
-        return pop_div[idx:]
-    #父代的进行交叉
+
+    def select(self, fitness):
+        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness / fitness.sum())
+        print(idx)
+        return self.pop[idx]
+
     def crossover(self, parent, pop):
         if np.random.rand() < self.cross_rate:
-            i_ = np.random.randint(0, self.pop_divsize, size=1)                     # select another individual from pop
+            i_ = np.random.randint(0, self.pop_size, size=1)                        # select another individual from pop
             cross_points = np.random.randint(0, 2, self.DNA_size).astype(np.bool)   # choose crossover points
             keep_city = parent[~cross_points]                                       # find the city number
             swap_city = pop[i_, np.isin(pop[i_].ravel(), keep_city, invert=True)]
             parent[:] = np.concatenate((keep_city, swap_city))
         return parent
-    #变异
+
     def mutate(self, child):
         for point in range(self.DNA_size):
             if np.random.rand() < self.mutate_rate:
@@ -75,25 +56,14 @@ class GA(object):
         return child
 
     def evolve(self, fitness):
-        if comm_rank == 0:
-            data = self.pop_div.copy()
-        else:
-            data = None
-        data = comm.scatter(data,root = 0)
-        # print(data)
-        fit = np.split(fitness,self.pop_mpi, axis = 0)
-        pop = self.select(fit[comm_rank],data)
+        pop = self.select(fitness)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
             child = self.crossover(parent, pop_copy)
             child = self.mutate(child)
             parent[:] = child
+        self.pop = pop
 
-        if comm_rank == 0:
-            data = comm.gather(comm_rank, root=0)
-            self.pop_div = data
-        else:
-            comm.gather(comm_rank,root=0)
 
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
@@ -109,22 +79,15 @@ class TravelSalesPerson(object):
         plt.ylim((-0.1, 1.1))
         plt.pause(0.01)
 
-#遗传算法的实体
+
 ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
-#环境
+
 env = TravelSalesPerson(N_CITIES)
-
 for generation in range(N_GENERATIONS):
-    #翻译DNA,env.city_position表示城市所在的位置，并打印其坐标
     lx, ly = ga.translateDNA(ga.pop, env.city_position)
-    #整个路线的长度
     fitness, total_distance = ga.get_fitness(lx, ly)
-    #进化DNA
     ga.evolve(fitness)
-
-    #可视化
     best_idx = np.argmax(fitness)
-
     print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
     env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
