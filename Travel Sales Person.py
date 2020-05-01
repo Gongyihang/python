@@ -5,18 +5,22 @@ Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
 import matplotlib.pyplot as plt
 import numpy as np
 from mpiutil import MPIUtil
+from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+comm_rank = comm.Get_rank()
+comm_size = comm.Get_size()
+
 #城市的数量
-N_CITIES = 200  # DNA size
+N_CITIES = 24  # DNA size
 #交叉配对的比率
 CROSS_RATE = 0.1
 #变异的概率
 MUTATE_RATE = 0.02
 #种群的数量
-POP_SIZE = 500
+POP_SIZE = 120
 #变异的代数
 N_GENERATIONS = 99999999999
-
-mpi = MPIUtil()
 
 class GA(object):
     def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size, ):
@@ -24,9 +28,12 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
+        self.pop_mpi = comm_size
         #随机排列一个数组
-        #这里的ga.pop和mpi有关
         self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
+        #把这个数组按照进程的数量平均分成pop_divsize份
+        self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
+        self.pop_divsize = self.pop_size // self.pop_mpi
     #翻译DNA
     def translateDNA(self, DNA, city_position):     # get cities' coord in order
         line_x = np.empty_like(DNA, dtype=np.float64)
@@ -42,15 +49,17 @@ class GA(object):
         for i, (xs, ys) in enumerate(zip(line_x, line_y)):
             total_distance[i] = np.sum(np.sqrt(np.square(np.diff(xs)) + np.square(np.diff(ys))))
         fitness = np.exp(self.DNA_size * 2 / total_distance)#将总路程的差距扩大化
+        # print(fitness)
         return fitness, total_distance
     #适者生存，不适者淘汰的准则
-    def select(self, fitness):
-        idx = np.random.choice(np.arange(self.pop_size), size=self.pop_size, replace=True, p=fitness / fitness.sum())
-        return self.pop[idx]
+    def select(self, fitness, pop_div):
+        idx = np.random.choice(np.arange(self.pop_divsize), size=self.pop_divsize, replace=True, p = fitness / fitness.sum())
+        print(pop_div)
+        return pop_div[idx]
     #父代的进行交叉
     def crossover(self, parent, pop):
         if np.random.rand() < self.cross_rate:
-            i_ = np.random.randint(0, self.pop_size, size=1)                        # select another individual from pop
+            i_ = np.random.randint(0, self.pop_divsize, size=1)                     # select another individual from pop
             cross_points = np.random.randint(0, 2, self.DNA_size).astype(np.bool)   # choose crossover points
             keep_city = parent[~cross_points]                                       # find the city number
             swap_city = pop[i_, np.isin(pop[i_].ravel(), keep_city, invert=True)]
@@ -66,13 +75,25 @@ class GA(object):
         return child
 
     def evolve(self, fitness):
-        pop = self.select(fitness)
+        if comm_rank == 0:
+            data = self.pop_div.copy()
+        else:
+            data = None
+        data = comm.scatter(data,root = 0)
+        # print(data)
+        fit = np.split(fitness,self.pop_mpi, axis = 0)
+        pop = self.select(fit[comm_rank],data)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
             child = self.crossover(parent, pop_copy)
             child = self.mutate(child)
             parent[:] = child
-        self.pop = pop
+
+        if comm_rank == 0:
+            data = comm.gather(comm_rank, root=0)
+            self.pop_div = data
+        else:
+            comm.gather(comm_rank,root=0)
 
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
@@ -103,6 +124,7 @@ for generation in range(N_GENERATIONS):
 
     #可视化
     best_idx = np.argmax(fitness)
+
     print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
     env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])

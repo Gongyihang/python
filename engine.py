@@ -15,9 +15,7 @@ import os
 
 from .components import IndividualBase, Population
 from .plugin_interfaces.operators import Selection, Crossover, Mutation
-
 from .plugin_interfaces.analysis import OnTheFlyAnalysis
-
 from mpiutil import MPIUtil
 
 mpi = MPIUtil()
