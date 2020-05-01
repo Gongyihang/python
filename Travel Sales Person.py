@@ -4,6 +4,7 @@ Visit my tutorial website for more: https://morvanzhou.github.io/tutorials/
 """
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 from mpiutil import MPIUtil
 from mpi4py import MPI
 
@@ -49,13 +50,11 @@ class GA(object):
         for i, (xs, ys) in enumerate(zip(line_x, line_y)):
             total_distance[i] = np.sum(np.sqrt(np.square(np.diff(xs)) + np.square(np.diff(ys))))
         fitness = np.exp(self.DNA_size * 2 / total_distance)#将总路程的差距扩大化
-        # print(fitness)
         return fitness, total_distance
     #适者生存，不适者淘汰的准则
     def select(self, fitness, pop_div):
         idx = np.random.choice(np.arange(self.pop_divsize), size=self.pop_divsize, replace=True, p = fitness / fitness.sum())
-        print(pop_div)
-        return pop_div[idx:]
+        return pop_div[idx]
     #父代的进行交叉
     def crossover(self, parent, pop):
         if np.random.rand() < self.cross_rate:
@@ -80,7 +79,6 @@ class GA(object):
         else:
             data = None
         data = comm.scatter(data,root = 0)
-        # print(data)
         fit = np.split(fitness,self.pop_mpi, axis = 0)
         pop = self.select(fit[comm_rank],data)
         pop_copy = pop.copy()

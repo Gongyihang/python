@@ -16,14 +16,17 @@ if comm_rank == 0:
     pop_div = np.split(pop,comm_size,axis = 0)
     data = pop_div
 else:
-    data = None
+    data = None 
 data = comm.scatter(data,root = 0)
-print(comm_rank)
+print(data)
 
 print(random.random())
+print("$$$$$$$$$$")
 
 
 if comm_rank == 0:
     data = comm.gather(comm_rank, root=0)
+    print("###########")
 else:
     comm.gather(comm_rank,root=0)
+
