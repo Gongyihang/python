@@ -21,7 +21,8 @@ MUTATE_RATE = 0.02
 #种群的数量
 POP_SIZE = 120
 #变异的代数
-N_GENERATIONS = 99999999999
+N_GENERATIONS = 10
+
 
 class GA(object):
     def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size, ):
@@ -86,13 +87,11 @@ class GA(object):
             child = self.crossover(parent, pop_copy)
             child = self.mutate(child)
             parent[:] = child
-
         if comm_rank == 0:
-            data = comm.gather(comm_rank, root=0)
+            data = comm.gather(data, root=0)
             self.pop_div = data
         else:
-            comm.gather(comm_rank,root=0)
-
+            comm.gather(data,root=0)
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
         self.city_position = np.random.rand(n_cities, 2)
@@ -119,7 +118,6 @@ for generation in range(N_GENERATIONS):
     fitness, total_distance = ga.get_fitness(lx, ly)
     #进化DNA
     ga.evolve(fitness)
-
     #可视化
     best_idx = np.argmax(fitness)
 
