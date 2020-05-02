@@ -33,6 +33,7 @@ class GA(object):
         self.pop_mpi = comm_size
         #随机排列一个数组
         self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
+        # self.pop = np.vstack([np.loadtxt("data.txt",dtype=np.int64)])
         #把这个数组按照进程的数量平均分成pop_divsize份
         self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
         self.pop_divsize = self.pop_size // self.pop_mpi
@@ -81,7 +82,6 @@ class GA(object):
             data = None
         data = comm.scatter(data,root = 0)
         fit = np.split(fitness,self.pop_mpi, axis = 0)
-        print(fit)
         pop = self.select(fit[comm_rank],data)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
@@ -90,13 +90,14 @@ class GA(object):
             parent[:] = child
         if comm_rank == 0:
             data = comm.gather(data, root=0)
-            self.pop_div = data
+            self.pop_div = data     
         else:
             comm.gather(data,root=0)
 
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
-        self.city_position = np.random.rand(n_cities, 2)
+        # self.city_position = np.random.rand(n_cities, 2)
+        self.city_position = np.loadtxt("cities.txt")
         plt.ion()
 
     def plotting(self, lx, ly, total_d):

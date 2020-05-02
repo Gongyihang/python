@@ -18,7 +18,7 @@ class GA(object):
         self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
 
         #把这个数组按照进程的数量平均分成pop_divsize份
-        self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
+        # self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
 
     def translateDNA(self, DNA, city_position):     # get cities' coord in order
         line_x = np.empty_like(DNA, dtype=np.float64)
