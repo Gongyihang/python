@@ -19,7 +19,7 @@ CROSS_RATE = 0.1
 #变异的概率
 MUTATE_RATE = 0.02
 #种群的数量
-POP_SIZE = 120
+POP_SIZE = 480
 #变异的代数
 N_GENERATIONS = 99999999
 
@@ -77,22 +77,23 @@ class GA(object):
 
     def evolve(self, fitness):
         if comm_rank == 0:
-            data = self.pop_div
+            pop = self.pop_div
         else:
-            data = None
-        data = comm.scatter(data,root = 0)
+            pop = None
+        pop = comm.scatter(pop,root = 0)
         fit = np.split(fitness,self.pop_mpi, axis = 0)
-        pop = self.select(fit[comm_rank],data)
+        pop = self.select(fit[comm_rank],pop)
         pop_copy = pop.copy()
         for parent in pop:  # for every parent
             child = self.crossover(parent, pop_copy)
             child = self.mutate(child)
             parent[:] = child
         if comm_rank == 0:
-            data = comm.gather(data, root=0)
-            self.pop_div = data     
+            pop = comm.gather(pop, root=0)
+            self.pop = np.concatenate(pop)
+            # self.pop_div = pop
         else:
-            comm.gather(data,root=0)
+            comm.gather(pop,root=0)
 
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
