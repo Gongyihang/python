@@ -35,7 +35,7 @@ else:
     #环境
     env = TravelSalesPerson(N_CITIES)
 
-temp = []
+# temp = [0]
 
 for generation in range(N_GENERATIONS):
     #翻译DNA,env.city_position表示城市所在的位置，并打印其坐标
@@ -52,9 +52,9 @@ for generation in range(N_GENERATIONS):
     env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
 
 
-    temp.append(total_distance[best_idx])
+    # temp.append(fitness[best_idx])
 
-    if temp[-1] - total_distance < 0.05:
-        break
+    # if fitness[best_idx] - temp[-2] < 0.0000000000000000000000000000000000001:
+    #     break
 plt.ioff()
 plt.show()
