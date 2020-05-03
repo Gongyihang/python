@@ -31,13 +31,13 @@ import numpy as np
 #     comm.gather(data,root=0)
 
 
-# data = [np.random.permutation(24) for _ in range(120)]
-# np.savetxt("data.txt",data,fmt="%d")
+data = [np.random.permutation(48) for _ in range(240)]
+np.savetxt("data.txt",data,fmt="%d")
 
 # load_data = np.loadtxt("data.txt")
 
 # for i, d in enumerate(load_data):
 #     print(111)
 
-cities = np.random.rand(24, 2)
+cities = np.random.rand(48, 2)
 np.savetxt("cities.txt",cities)

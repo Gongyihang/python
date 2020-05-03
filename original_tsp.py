@@ -1,11 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-N_CITIES = 20  # DNA size
-CROSS_RATE = 0.1
-MUTATE_RATE = 0.02
-POP_SIZE = 500
-N_GENERATIONS = 500
+# N_CITIES = 20  # DNA size
+# CROSS_RATE = 0.1
+# MUTATE_RATE = 0.02
+# POP_SIZE = 500
+# N_GENERATIONS = 500
 
 
 class GA(object):
@@ -15,8 +15,8 @@ class GA(object):
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
 
-        self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
-
+        # self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
+        self.pop = np.vstack([np.loadtxt("data.txt",dtype=np.int64)])
         #把这个数组按照进程的数量平均分成pop_divsize份
         # self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
 
@@ -69,7 +69,8 @@ class GA(object):
 
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
-        self.city_position = np.random.rand(n_cities, 2)
+        # self.city_position = np.random.rand(n_cities, 2)
+        self.city_position = np.loadtxt("cities.txt")
         plt.ion()
 
     def plotting(self, lx, ly, total_d):
@@ -79,21 +80,21 @@ class TravelSalesPerson(object):
         plt.text(-0.05, -0.05, "Total distance=%.2f" % total_d, fontdict={'size': 20, 'color': 'red'})
         plt.xlim((-0.1, 1.1))
         plt.ylim((-0.1, 1.1))
-        plt.pause(0.01)
+        plt.pause(0.1)
 
 
-ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
+# ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
 
-env = TravelSalesPerson(N_CITIES)
-for generation in range(N_GENERATIONS):
-    lx, ly = ga.translateDNA(ga.pop, env.city_position)
-    fitness, total_distance = ga.get_fitness(lx, ly)
-    ga.evolve(fitness)
-    print(fitness)
-    best_idx = np.argmax(fitness)
-    print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
+# env = TravelSalesPerson(N_CITIES)
+# for generation in range(N_GENERATIONS):
+#     lx, ly = ga.translateDNA(ga.pop, env.city_position)
+#     fitness, total_distance = ga.get_fitness(lx, ly)
+#     ga.evolve(fitness)
+#     print(fitness)
+#     best_idx = np.argmax(fitness)
+#     print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
-    env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
+#     env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
 
-plt.ioff()
-plt.show()
+# plt.ioff()
+# plt.show()
