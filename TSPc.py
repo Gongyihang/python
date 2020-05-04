@@ -1,11 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import time
+
+start = time.clock()
 
 N_CITIES = 48  # DNA size
 CROSS_RATE = 0.15
 MUTATE_RATE = 0.03
-POP_SIZE = 960
-N_GENERATIONS = 99999999
+POP_SIZE = 1920
+N_GENERATIONS = 1500
 
 
 class GA(object):
@@ -14,7 +17,6 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-
         # self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
         self.pop = np.vstack([np.loadtxt("data960.txt",dtype=np.int64)])
         #把这个数组按照进程的数量平均分成pop_divsize份
@@ -80,7 +82,7 @@ class TravelSalesPerson(object):
         plt.text(-0.05, -0.05, "Total distance=%.2f" % total_d, fontdict={'size': 20, 'color': 'red'})
         plt.xlim((-0.1, 1.1))
         plt.ylim((-0.1, 1.1))
-        plt.pause(0.1)
+        plt.pause(0.0001)
 
 
 ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
@@ -98,3 +100,6 @@ for generation in range(N_GENERATIONS):
 
 plt.ioff()
 plt.show()
+
+end = time.clock()
+print('Time: ', end - start, 's | total_distance: ',total_distance[best_idx])

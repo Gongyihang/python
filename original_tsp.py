@@ -16,7 +16,7 @@ class GA(object):
         self.pop_size = pop_size
 
         # self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
-        self.pop = np.vstack([np.loadtxt("data.txt",dtype=np.int64)])
+        self.pop = np.vstack([np.loadtxt("data1920.txt",dtype=np.int64)])
         #把这个数组按照进程的数量平均分成pop_divsize份
         # self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
 
@@ -80,7 +80,7 @@ class TravelSalesPerson(object):
         plt.text(-0.05, -0.05, "Total distance=%.2f" % total_d, fontdict={'size': 20, 'color': 'red'})
         plt.xlim((-0.1, 1.1))
         plt.ylim((-0.1, 1.1))
-        plt.pause(0.1)
+        plt.pause(0.0001)
 
 
 # ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)

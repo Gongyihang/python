@@ -3,7 +3,10 @@ import random
 import numpy as np
 from original_tsp import GA,TravelSalesPerson
 import matplotlib.pyplot as plt
-import numpy as np
+import time
+
+
+start = time.clock()
 
 comm = MPI.COMM_WORLD
 comm_rank = comm.Get_rank()
@@ -16,9 +19,9 @@ CROSS_RATE = 0.15
 #变异的概率
 MUTATE_RATE = 0.03
 #种群的数量
-POP_SIZE_ALL = 960
+POP_SIZE_ALL = 7680
 #变异的代数
-N_GENERATIONS = 99999999
+N_GENERATIONS = 1500
 
 POP_SIZE = POP_SIZE_ALL // comm_size
 
@@ -50,11 +53,12 @@ for generation in range(N_GENERATIONS):
     print(comm_rank,' Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
     env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
-
-
     # temp.append(fitness[best_idx])
 
-    # if fitness[best_idx] - temp[-2] < 0.0000000000000000000000000000000000001:
+    # if total_distance[best_idx] - 6.462503133636991 < 0:
     #     break
 plt.ioff()
 plt.show()
+
+end = time.clock()
+print('Time: ', end - start, 's | total_distance: ',total_distance[best_idx])
