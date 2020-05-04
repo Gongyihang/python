@@ -2,9 +2,9 @@ from mpi4py import MPI
 import random
 import numpy as np
 
-# comm = MPI.COMM_WORLD
-# comm_rank = comm.Get_rank()
-# comm_size = comm.Get_size()
+comm = MPI.COMM_WORLD
+comm_rank = comm.Get_rank()
+comm_size = comm.Get_size()
 
 # DNA_size = 12
 # pop_size = 12
@@ -24,20 +24,22 @@ import numpy as np
 
 
 # if comm_rank == 0:
-#     data = comm.gather(data, root=0)
+#     data = comm.bcast("1111")
+#     print(data)
 #     # print("########")
 #     # print(data)
 # else:
-#     comm.gather(data,root=0)
+#     data = comm.bcast("1111")
+#     print(data)
 
 
-data = [np.random.permutation(48) for _ in range(960)]
+data = [np.random.permutation(96) for _ in range(960)]
 np.savetxt("data960.txt",data,fmt="%d")
 
-# load_data = np.loadtxt("data.txt")
+# # load_data = np.loadtxt("data.txt")
 
-# for i, d in enumerate(load_data):
-#     print(111)
+# # for i, d in enumerate(load_data):
+# #     print(111)
 
-cities = np.random.rand(48, 2)
-np.savetxt("cities.txt",cities)
+# cities = np.random.rand(96, 2)
+# np.savetxt("cities.txt",cities)

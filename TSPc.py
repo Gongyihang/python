@@ -4,11 +4,11 @@ import time
 
 start = time.clock()
 
-N_CITIES = 48  # DNA size
-CROSS_RATE = 0.15
-MUTATE_RATE = 0.03
-POP_SIZE = 1920
-N_GENERATIONS = 1500
+N_CITIES = 96  # DNA size
+CROSS_RATE = 0.1
+MUTATE_RATE = 0.02
+POP_SIZE = 960
+N_GENERATIONS = 50
 
 
 class GA(object):
@@ -17,10 +17,7 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-        # self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
         self.pop = np.vstack([np.loadtxt("data960.txt",dtype=np.int64)])
-        #把这个数组按照进程的数量平均分成pop_divsize份
-        # self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
 
     def translateDNA(self, DNA, city_position):     # get cities' coord in order
         line_x = np.empty_like(DNA, dtype=np.float64)
@@ -88,18 +85,20 @@ class TravelSalesPerson(object):
 ga = GA(DNA_size=N_CITIES, cross_rate=CROSS_RATE, mutation_rate=MUTATE_RATE, pop_size=POP_SIZE)
 
 env = TravelSalesPerson(N_CITIES)
+
 for generation in range(N_GENERATIONS):
     lx, ly = ga.translateDNA(ga.pop, env.city_position)
     fitness, total_distance = ga.get_fitness(lx, ly)
     ga.evolve(fitness)
     # print(fitness)
     best_idx = np.argmax(fitness)
-    print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
+    # print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
-    env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
+    # env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
 
-plt.ioff()
-plt.show()
+    if generation == (N_GENERATIONS - 1):
+        end = time.clock()
+        print('Time: ', end - start, 's | total_distance: ',total_distance[best_idx])
+# plt.ioff()
+# plt.show()
 
-end = time.clock()
-print('Time: ', end - start, 's | total_distance: ',total_distance[best_idx])

@@ -16,7 +16,7 @@ class GA(object):
         self.pop_size = pop_size
 
         # self.pop = np.vstack([np.random.permutation(DNA_size) for _ in range(pop_size)])
-        self.pop = np.vstack([np.loadtxt("data1920.txt",dtype=np.int64)])
+        self.pop = np.vstack([np.loadtxt("data240.txt",dtype=np.int64)])
         #把这个数组按照进程的数量平均分成pop_divsize份
         # self.pop_div = np.split(self.pop,self.pop_mpi,axis = 0)
 
