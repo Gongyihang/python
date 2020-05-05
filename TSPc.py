@@ -11,6 +11,7 @@ POP_SIZE = 960
 N_GENERATIONS = 50
 
 
+
 class GA(object):
     def __init__(self, DNA_size, cross_rate, mutation_rate, pop_size, ):
         self.DNA_size = DNA_size
