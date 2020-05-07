@@ -89,7 +89,6 @@ for generation in range(N_GENERATIONS):
     lx, ly = ga.translateDNA(ga.pop, env.city_position)
     fitness, total_distance = ga.get_fitness(lx, ly)
     ga.evolve(fitness)
-    # print(fitness)
     best_idx = np.argmax(fitness)
     # print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 

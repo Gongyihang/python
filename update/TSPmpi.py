@@ -95,10 +95,6 @@ for generation in range(N_GENERATIONS):
     # if generation % 5 == 0:
     best = comm.bcast(fitness[best_idx])
 
-    # t = comm.bcast("111")
-
-    # print(t)
-    # time.sleep(0.5)
 
     worst_idx = np.argmin(fitness)
 
