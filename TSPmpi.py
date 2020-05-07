@@ -15,9 +15,9 @@ comm_size = comm.Get_size()
 #城市的数量
 N_CITIES = 96  # DNA size
 #交叉配对的比率
-CROSS_RATE = 0.05
+CROSS_RATE = 0.1
 #变异的概率
-MUTATE_RATE = 0.005
+MUTATE_RATE = 0.02
 #种群的数量
 POP_SIZE_ALL = 960
 #变异的代数
