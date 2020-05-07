@@ -13,4 +13,7 @@ data962403 = [np.random.permutation(96) for _ in range(240)]
 np.savetxt("data962403.txt",data962403,fmt="%d")
 
 data96960 = [np.random.permutation(96) for _ in range(960)]
-np.savetxt("data962403.txt",data96960,fmt="%d")
+np.savetxt("data96960.txt",data96960,fmt="%d")
+
+cities = np.random.rand(96, 2)
+np.savetxt("cities96.txt",cities)

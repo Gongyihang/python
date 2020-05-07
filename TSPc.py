@@ -16,7 +16,7 @@ class GA(object):
         self.cross_rate = cross_rate
         self.mutate_rate = mutation_rate
         self.pop_size = pop_size
-        self.pop = np.vstack([np.loadtxt("data960.txt",dtype=np.int64)])
+        self.pop = np.vstack([np.loadtxt("data96960.txt",dtype=np.int64)])
 
     def translateDNA(self, DNA, city_position):     # get cities' coord in order
         line_x = np.empty_like(DNA, dtype=np.float64)
@@ -68,7 +68,7 @@ class GA(object):
 class TravelSalesPerson(object):
     def __init__(self, n_cities):
         # self.city_position = np.random.rand(n_cities, 2)
-        self.city_position = np.loadtxt("cities.txt")
+        self.city_position = np.loadtxt("cities96.txt")
         plt.ion()
 
     def plotting(self, lx, ly, total_d):
@@ -89,7 +89,6 @@ for generation in range(N_GENERATIONS):
     lx, ly = ga.translateDNA(ga.pop, env.city_position)
     fitness, total_distance = ga.get_fitness(lx, ly)
     ga.evolve(fitness)
-    # print(fitness)
     best_idx = np.argmax(fitness)
     # print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
