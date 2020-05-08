@@ -88,9 +88,9 @@ for generation in range(N_GENERATIONS):
     #可视化
     best_idx = np.argmax(fitness)
 
-    # print(comm_rank,' Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
+    print(comm_rank,' Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
-    # env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
+    env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
 
     # if generation % 5 == 0:
     best = comm.bcast(fitness[best_idx])
@@ -104,6 +104,6 @@ for generation in range(N_GENERATIONS):
         end = time.clock()
         print('Rank: ', comm_rank, 'Time: ', end - start, 's | total_distance: ',total_distance[best_idx])
 
-# plt.ioff()
-# plt.show()
+plt.ioff()
+plt.show()
 

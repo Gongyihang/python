@@ -18,7 +18,7 @@ class GA(object):
         self.pop_size = pop_size
         self.pop = np.vstack([np.loadtxt("data96960.txt",dtype=np.int64)])
 
-    def translateDNA(self, DNA, city_position):     # get cities' coord in order
+    def translateDNA(self, DNA, city_position):# get cities' coord in order
         line_x = np.empty_like(DNA, dtype=np.float64)
         line_y = np.empty_like(DNA, dtype=np.float64)
         for i, d in enumerate(DNA):
@@ -90,13 +90,13 @@ for generation in range(N_GENERATIONS):
     fitness, total_distance = ga.get_fitness(lx, ly)
     ga.evolve(fitness)
     best_idx = np.argmax(fitness)
-    # print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
+    print('Gen:', generation, '| best fit: %.2f' % fitness[best_idx],)
 
-    # env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
+    env.plotting(lx[best_idx], ly[best_idx], total_distance[best_idx])
 
     if generation == (N_GENERATIONS - 1):
         end = time.clock()
         print('Time: ', end - start, 's | total_distance: ',total_distance[best_idx])
-# plt.ioff()
-# plt.show()
+plt.ioff()
+plt.show()
 
