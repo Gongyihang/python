@@ -12,6 +12,7 @@ comm = MPI.COMM_WORLD
 comm_rank = comm.Get_rank()
 comm_size = comm.Get_size()
 
+
 #城市的数量
 N_CITIES = 96  # DNA size
 #交叉配对的比率
