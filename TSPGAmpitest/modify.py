@@ -5,6 +5,7 @@ from original_tsp import GA,TravelSalesPerson
 import matplotlib.pyplot as plt
 import time
 
+
 start = time.clock()
 comm = MPI.COMM_WORLD
 comm_rank = comm.Get_rank()
