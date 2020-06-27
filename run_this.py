@@ -11,7 +11,7 @@ def update():
     for episode in range(100):
         # 初始化 state 的观测值
         observation = env.reset()
-        print(episode)
+        print(episode)  
         while True:
             # 更新可视化环境
             
