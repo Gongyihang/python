@@ -31,7 +31,6 @@ def update():
     #         # 如果掉下地狱或者升上天堂, 这回合就结束了
             if done:
                 break
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:   #先退出pygame窗口，再退出程序
                     pygame.quit()
