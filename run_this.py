@@ -14,7 +14,6 @@ def update():
         print(episode)  
         while True:
             # 更新可视化环境
-            
             env.render()
     #         # RL 大脑根据 state 的观测值挑选 action
             action = RL.choose_action(str(observation))
