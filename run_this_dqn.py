@@ -1,5 +1,6 @@
 from maze_env_modify import Maze
 from RL_brain import QLearningTable
+from DQN import DQN
 import pygame
 import time
 import sys
@@ -8,22 +9,30 @@ import numpy as np
 
 def update():
     # 学习 100 回合
-    for episode in range(100):
+    for episode in range(400):
         # 初始化 state 的观测值
         observation = env.reset()
-        print(episode)  
+        ep_r = 0
+        # print(episode)
         while True:
             # 更新可视化环境
             env.render()
     #         # RL 大脑根据 state 的观测值挑选 action
-            action = RL.choose_action(str(observation))
+            action = dqn.choose_action(observation)
             # print(observation)
 
     #         # 探索者在环境中实施这个 action, 并得到环境返回的下一个 state 观测值, reward 和 done (是否是掉下地狱或者升上天堂)
-            observation_, reward, done, flag = env.step(action)
+            observation_, reward, done, info = env.step(action)
 
     #         # RL 从这个序列 (state, action, reward, state_) 中学习
-            RL.learn(str(observation), action, reward, str(observation_))
+            dqn.store_transition(s, a, r, s_)
+
+            ep_r += reward
+            if dqn.memory_counter > MEMORY_CAPACITY:
+                dqn.learn()
+                if done:
+                    print('Ep: ', i_episode,
+                        '| Ep_r: ', round(ep_r, 2))
 
     #         # 将下一个 state 的值传到下一次循环
             observation = observation_
@@ -42,5 +51,6 @@ def update():
 if __name__ == "__main__":
     # 定义环境 env 和 RL 方式
     env = Maze()
-    RL = QLearningTable(actions=list(range(env.n_actions)))
+    # RL = QLearningTable(actions=list(range(env.n_actions)))
+    dqn = DQN()
     update()
