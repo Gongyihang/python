@@ -20,32 +20,30 @@ EPSILON = 0.9               # greedy policy
 GAMMA = 0.9                 # reward discount
 TARGET_REPLACE_ITER = 100   # target update frequency
 MEMORY_CAPACITY = 2000
-# env = gym.make('CartPole-v0')
-# env = env.unwrapped
-N_ACTIONS = 4
-N_STATES = 26
-ENV_A_SHAPE = 26
-
+N_ACTIONS = 4               # 4个动作
+N_STATES = 2                # x，y坐标，两个位置信息
 
 class Net(nn.Module):
     def __init__(self, ):
         super(Net, self).__init__()
-        self.fc1 = nn.Linear(N_STATES, 50)
+        self.fc1 = nn.Linear(N_STATES, 10)     
         self.fc1.weight.data.normal_(0, 0.1)   # initialization
-        self.out = nn.Linear(50, N_ACTIONS)
+        self.out = nn.Linear(10, N_ACTIONS)
         self.out.weight.data.normal_(0, 0.1)   # initialization
 
-    def forward(self, x):
+    #x，y坐标经过10层的hidden layer，连接到4个动作
+
+    def forward(self, x):           
         x = self.fc1(x)
-        x = F.relu(x)
-        actions_value = self.out(x)
+        x = F.relu(x)                   #激活函数
+        actions_value = self.out(x)     #生成的action的value
         return actions_value
 
 
 class DQN(object):
     def __init__(self):
-        self.eval_net, self.target_net = Net(), Net()
-
+        self.eval_net, self.target_net = Net(), Net()#两个参数不同结构相同的神经网络
+        # self.restore_net()
         self.learn_step_counter = 0                                     # for target updating
         self.memory_counter = 0                                         # for storing memory
         self.memory = np.zeros((MEMORY_CAPACITY, N_STATES * 2 + 2))     # initialize memory
@@ -57,7 +55,7 @@ class DQN(object):
         # input only one sample
         if np.random.uniform() < EPSILON:   # greedy
             actions_value = self.eval_net.forward(x)
-            action = torch.max(actions_value, 1)[1].data.numpy()[0, 0]
+            action = torch.max(actions_value, 1)[1].data.numpy()[0]
             # action = action[0] if ENV_A_SHAPE == 0 else action.reshape(ENV_A_SHAPE)  # return the argmax index
         else:   # random
             action = np.random.randint(0, N_ACTIONS)
@@ -85,7 +83,7 @@ class DQN(object):
         b_r = torch.FloatTensor(b_memory[:, N_STATES+1:N_STATES+2])
         b_s_ = torch.FloatTensor(b_memory[:, -N_STATES:])
 
-        # q_eval w.r.t the action in experience
+        # q_eval w.r.t the action in experience     #重要公式
         q_eval = self.eval_net(b_s).gather(1, b_a)  # shape (batch, 1)
         q_next = self.target_net(b_s_).detach()     # detach from graph, don't backpropagate
         q_target = b_r + GAMMA * q_next.max(1)[0].view(BATCH_SIZE, 1)   # shape (batch, 1)
@@ -94,3 +92,15 @@ class DQN(object):
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+        self.save()
+
+    def save(self):
+        torch.save(self.eval_net,'eval_net.pkl')
+        torch.save(self.target_net,'target_net.pkl')
+
+    def restore_net(self):
+        self.eval_net = torch.load('eval_net.pkl')
+        self.target_net = torch.load('target_net.pkl')
+
+    # def restore_net(self):
+    #     pass
