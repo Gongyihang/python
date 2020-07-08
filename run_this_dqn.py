@@ -8,6 +8,7 @@ MEMORY_CAPACITY = 2000
 
 def update():
     # 学习 100 回合
+    dqn.restore_net()
     for i_episode in range(400):
         # 初始化 state 的观测值
         s = env.reset()
@@ -17,6 +18,7 @@ def update():
             # 更新可视化环境
             env.render()
     #         # RL 大脑根据 state 的观测值挑选 action
+            # dqn.restore_net()
             a = dqn.choose_action(s)
             # print(observation)
 

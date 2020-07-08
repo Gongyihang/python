@@ -51,7 +51,7 @@ class Maze:
     def reset(self):
         self._build_maze()
         pygame.display.update()
-        time.sleep(0.05)
+        # time.sleep(0.05)
         return self.start
 
     def step(self, action):
@@ -102,7 +102,7 @@ class Maze:
         return s_, reward, done, 0
 
     def render(self):
-        time.sleep(0.1)
+        # time.sleep(0.1)
         pygame.display.update()
 
 # if __name__ == '__main__':
