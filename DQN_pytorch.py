@@ -12,6 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import gym
+
 # Hyper Parameters
 BATCH_SIZE = 32
 LR = 0.01                   # learning rate
