@@ -72,7 +72,7 @@ class Maze:
         elif action == 2:   # right
             if self.map_arr[s[0]+1][s[1]]:
                 base_action[0] += 1
-                reward = 2
+                reward = 10
         elif action == 3:   # left
             if self.map_arr[s[0]-1][s[1]]:
                 base_action[0] -= 1
