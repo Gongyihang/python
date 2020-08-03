@@ -51,8 +51,8 @@ class Maze:
                     self.map_arr[row][column] = 1   #等于1，则没有访问
                     pygame.draw.rect(self.screen, WHITE,[PIX_PLUS * column + MARGIN, PIX_PLUS * row + MARGIN, SQUARE, SQUARE])
             # self.map_arr[0][0] = 0
-            pygame.draw.circle(self.screen, RED, self.start, 3, 3)
-            pygame.draw.circle(self.screen, GREEN, self.end, 3, 3)
+            pygame.draw.circle(self.screen, RED, [PIX_PLUS * self.start[0] + PIX_HALF,PIX_PLUS * self.start[1] + PIX_HALF], 3, 3)
+            pygame.draw.circle(self.screen, GREEN, [PIX_PLUS * self.end[0] + PIX_HALF,PIX_PLUS * self.end[1] + PIX_HALF], 3, 3)
             pygame.display.update()
 
     def reset(self):
@@ -90,7 +90,7 @@ class Maze:
             s_ = [9,9]
             done = True
             reward = -1
-            if (self.map_arr == 0).all():
+            if (self.map_arr == 0).all() and s == self.end:
                 reward = 100
                 print(self.map_arr)
             return s_, reward, done , 1
@@ -108,7 +108,7 @@ class Maze:
         s_ = new  # next state
 
         # done function
-        if (self.map_arr == 0).all():
+        if (self.map_arr == 0).all() and s == self.end:
             done = True
             s_ = [9,9]
             reward = 100

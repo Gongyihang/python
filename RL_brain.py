@@ -36,7 +36,7 @@ class QLearningTable:
         else:
             q_target = r  # 下个 state 是终止符
         self.q_table.loc[s, a] += self.lr * (q_target - q_predict)  # 更新对应的 state-action 值
-        print(self.q_table)
+        # print(self.q_table)
 
     def check_state_exist(self, state):
         if state not in self.q_table.index:

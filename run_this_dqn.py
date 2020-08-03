@@ -9,7 +9,7 @@ MEMORY_CAPACITY = 2000
 def update():
     # 学习 100 回合
     # dqn.restore_net()
-    for i_episode in range(400):
+    for i_episode in range(1000000):
         # 初始化 state 的观测值
         s = env.reset()
         # ep_r = 0
