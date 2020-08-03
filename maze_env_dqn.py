@@ -111,5 +111,3 @@ class Maze:
 #         env.reset()
 #     env.after(100, update)
 #     env.mainloop()
-
-
